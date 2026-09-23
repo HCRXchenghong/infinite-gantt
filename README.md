@@ -17,6 +17,7 @@
 - [数据模型](#数据模型)
 - [API 接口](#api-接口)
 - [安全设计](#安全设计)
+- [部署](#部署)
 - [常见问题](#常见问题)
 
 ---
@@ -155,6 +156,12 @@ infinite-gantt/
 │   ├── style.css
 │   └── app.js          # 登录、事件 CRUD、负责人标签、人员名单
 │
+├── deploy/             # 自动化部署脚本（详见 deploy/README.md）
+│   ├── setup.sh        # 本地执行：连服务器并触发部署
+│   ├── remote.sh       # 服务器执行：备份→拉码→起容器→接反代→校验
+│   ├── README.md       # 部署架构、回滚、运维说明
+│   └── config.local.sh # 服务器地址（gitignore，不提交）
+│
 ├── .env                # 你的本地配置（自动生成/gitignore，不提交）
 ├── data.json           # 运行时数据（自动生成，不提交）
 └── bans.json           # 登录失败封禁记录（自动生成，不提交）
@@ -278,6 +285,52 @@ infinite-gantt/
 
 ---
 
+## 部署
+
+`deploy/` 下有一套自动化部署脚本，适用于**80/443 由容器化 Caddy 统一对外、各业务跑在同一 Docker 网络**的服务器结构。详细架构说明、回滚步骤与运维命令见 [deploy/README.md](deploy/README.md)。
+
+最简用法：
+
+```bash
+echo 'GANTT_HOST=root@<你的服务器IP>' > deploy/config.local.sh   # 该文件已 gitignore
+bash deploy/setup.sh                                              # 提示输入服务器密码
+```
+
+脚本是幂等的，会依次：备份现有 Caddyfile → 拉代码 → 随机生成后台密码写入 `.env` → 以 `node:20-alpine` 容器启动 → **追加**站点块到共享 Caddyfile（不动已有站点）→ 校验失败自动回滚 → 端到端回归验证（含检查其它站点未被破坏）。
+
+### 部署前置条件
+
+| 条件 | 说明 |
+|---|---|
+| 域名解析 | 必须直接指向服务器 IP。若走 Cloudflare 代理（橙云），Caddy 的 HTTP-01 验证会失败，HTTPS 报 **525**——需改为 **DNS only**（灰云）或改用 DNS-01 |
+| 出网 | 服务器能访问 Docker Hub 与 GitHub |
+| 端口 | 云厂商安全组放行 80/443 |
+
+### 反代必须覆盖 X-Forwarded-For
+
+应用取 `X-Forwarded-For` 首段识别访客 IP 并据此封禁。反代**必须覆盖**而非追加这个头：
+
+```caddy
+reverse_proxy gantt:3000 {
+    header_up X-Forwarded-For {remote_host}
+}
+```
+
+否则攻击者自带 `X-Forwarded-For: <任意IP>` 即可让封禁记到别人头上而无限爆破，或把你自己的 IP 封掉。Caddy 默认行为就是覆盖，但建议显式写出意图。
+
+### 解锁被封禁的 IP
+
+`bans.json` 只在**进程启动时读取一次**，之后封禁状态在内存中。所以必须两步，缺一不可：
+
+```bash
+echo '{}' > /opt/infinite-gantt/bans.json
+docker restart gantt        # 不重启则内存中的封禁依然生效
+```
+
+> ⚠️ 累计输错 4 次即永久封禁该 IP。不要在公网端点上反复试错密码。
+
+---
+
 ## 常见问题
 
 **Q：刷新后看不到「所属部分」那一列？**
@@ -287,7 +340,7 @@ A：请强制刷新（`Cmd + Shift + R` / `Ctrl + F5`）清掉浏览器缓存的
 A：这是设计如此——同一部分（如硬件研发）在同一时间段最多允许 2 个事件并行。把新事件的起止时间错开，或改到其它部分即可。上限可在 `server.js` 顶部的 `MAX_CONCURRENT_PER_PART` 调整。
 
 **Q：我把自己 IP 封了，怎么解？**
-A：删掉 `bans.json` 文件（或删除其中对应的 IP 记录），然后重启服务。
+A：清空 `bans.json`（写入 `{}`）后**必须重启服务**——封禁状态在内存里，只改文件不重启无效。容器部署则 `docker restart gantt`。
 
 **Q：数据存在哪里？会丢吗？**
 A：全部存在 `data.json` 文件里，直接改文件也可以。该文件已被 gitignore，不会随仓库提交，也不会被别人的改动覆盖。

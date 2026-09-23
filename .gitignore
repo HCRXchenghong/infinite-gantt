@@ -10,6 +10,9 @@ bans.json
 # 环境变量：含后台账号密码，切勿提交
 .env
 
+# 部署私有配置：含服务器 IP / 账号，切勿提交
+deploy/config.local.sh
+
 # 日志
 *.log
 npm-debug.log*
