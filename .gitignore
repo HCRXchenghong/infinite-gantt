@@ -1,0 +1,23 @@
+# 依赖（本项目零依赖，保留以防将来引入）
+node_modules/
+
+# 运行时数据：由 server.js 首次启动自动生成种子数据
+data.json
+
+# 登录失败封禁记录：含访客 IP，不应公开
+bans.json
+
+# 环境变量：含后台账号密码，切勿提交
+.env
+
+# 日志
+*.log
+npm-debug.log*
+
+# macOS
+.DS_Store
+
+# 编辑器
+.vscode/
+.idea/
+*.swp

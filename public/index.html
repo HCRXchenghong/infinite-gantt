@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>悦享e食平台 · 项目时间线</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <h1>悦享e食平台 · 项目时间线</h1>
+      <p class="sub">硬件研发 · 软件开发 · 平台运营 三线并行推进</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="chart-toolbar">
+      <div class="legend" id="legend"></div>
+      <div class="zoom">
+        <button type="button" id="zoomOut" title="缩小：季度 → 月 → 周 → 日">−</button>
+        <span id="zoomLabel">周</span>
+        <button type="button" id="zoomIn" title="放大：日 → 周 → 月 → 季度">＋</button>
+      </div>
+    </div>
+    <div class="chart">
+      <div class="chart-inner">
+        <div class="labels">
+          <div class="corner">所属部分</div>
+          <div id="labels"></div>
+        </div>
+        <div class="grid-wrap">
+          <div class="timeline" id="timeline"></div>
+          <div class="today-line" id="todayLine" hidden></div>
+          <div class="rows" id="rows"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="modal" id="modal" hidden>
+    <div class="modal-box">
+      <span class="close" id="modalClose">×</span>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <footer class="foot">悦享e食 · 项目时间线甘特图</footer>
+  <script src="app.js"></script>
+</body>
+</html>

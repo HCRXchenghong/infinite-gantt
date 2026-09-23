@@ -1,0 +1,16 @@
+{
+  "name": "infinite-gantt",
+  "version": "1.0.0",
+  "private": true,
+  "description": "悦享e食平台项目时间线甘特图（零依赖 Node.js 全栈：前端甘特图 + 鉴权后台管理）",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "gantt",
+    "timeline",
+    "vanilla-js",
+    "nodejs",
+    "zero-dependency"
+  ]
+}
