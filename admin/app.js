@@ -270,7 +270,7 @@ async function loadList() {
   }
   list.innerHTML = sorted
     .map((e) => {
-      const cls = { 硬件研发: 'hw', 软件开发: 'sw', 平台运营: 'op' }[e.part] || 'sw';
+      const cls = { 硬件研发: 'hw', 软件开发: 'sw', 平台运营: 'op', 其他部分: 'other' }[e.part] || 'sw';
       const owners = (e.owners || []).length
         ? e.owners.map((o) => `<span class="mini-owner">${o}</span>`).join('')
         : '<span class="no-owner">未指定负责人</span>';

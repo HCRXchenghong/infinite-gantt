@@ -2,6 +2,7 @@ const PARTS = [
   { key: '硬件研发', name: '硬件研发', cls: 'hw', color: '#e53e3e' },
   { key: '软件开发', name: '软件开发', cls: 'sw', color: '#3182ce' },
   { key: '平台运营', name: '平台运营', cls: 'op', color: '#dd6b20' },
+  { key: '其他部分', name: '其他部分', cls: 'other', color: '#805ad5' },
 ];
 const DAY = 86400000;
 const HEADER_H = 46;

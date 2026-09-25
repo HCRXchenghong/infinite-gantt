@@ -125,6 +125,7 @@ main .wrap { flex: 1; min-height: 0; display: flex; flex-direction: column; }
 .bar.hw { background: linear-gradient(135deg, #e53e3e, #f56565); }
 .bar.sw { background: linear-gradient(135deg, #3182ce, #4299e1); }
 .bar.op { background: linear-gradient(135deg, #dd6b20, #ed8936); }
+.bar.other { background: linear-gradient(135deg, #805ad5, #9f7aea); }
 .bar .bar-owners { display: flex; flex-wrap: wrap; gap: 4px; white-space: normal; }
 .bar .owner-chip {
   display: inline-block; background: rgba(255,255,255,.22); padding: 1px 8px; border-radius: 20px;
@@ -143,6 +144,7 @@ main .wrap { flex: 1; min-height: 0; display: flex; flex-direction: column; }
 .modal-body .tag.hw { background: #e53e3e; }
 .modal-body .tag.sw { background: #3182ce; }
 .modal-body .tag.op { background: #dd6b20; }
+.modal-body .tag.other { background: #805ad5; }
 .modal-body .kv { display: flex; gap: 10px; padding: 8px 0; border-top: 1px dashed var(--line-soft); font-size: 14px; }
 .modal-body .kv b { color: var(--muted); width: 70px; flex-shrink: 0; font-weight: 500; }
 .modal-body .kv p { flex: 1; line-height: 1.6; }

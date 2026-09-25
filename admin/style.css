@@ -119,6 +119,7 @@ input, select, textarea { font-family: inherit; }
 .tag.hw { background: #e53e3e; }
 .tag.sw { background: #3182ce; }
 .tag.op { background: #dd6b20; }
+.tag.other { background: #805ad5; }
 .item .info { flex: 1; min-width: 0; }
 .item .info b { font-size: 14px; display: block; }
 .item .info > span { font-size: 12px; color: var(--faint); display: block; margin-top: 2px; }
