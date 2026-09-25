@@ -153,3 +153,67 @@ input, select, textarea { font-family: inherit; }
   .content { padding: 20px; }
   .event-form { grid-template-columns: 1fr; }
 }
+
+@media (max-width: 640px) {
+  body { background: #f7f9fc; overflow-x: hidden; }
+  .login-wrap { padding: 16px; }
+  .login-box { padding: 28px 20px 24px; border-radius: 12px; }
+  .login-box input { min-height: 44px; font-size: 16px; }
+  .login-box button { min-height: 44px; }
+
+  .sidebar {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "brand foot" "nav nav";
+    background: #1a365d;
+  }
+  .brand { grid-area: brand; padding: 16px 14px 12px; border-bottom: none; }
+  .brand-title { font-size: 18px; }
+  .brand-sub { font-size: 11px; }
+  .nav {
+    grid-area: nav; display: flex; gap: 6px; overflow-x: auto;
+    padding: 8px 10px 10px; scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav-item { flex: 0 0 auto; margin: 0; padding: 9px 13px; font-size: 13px; }
+  .sidebar-foot {
+    grid-area: foot; flex-direction: row; align-items: center; gap: 6px;
+    padding: 12px 10px; border-top: none;
+  }
+  .sidebar-foot .btn { padding: 7px 9px; font-size: 11px; }
+
+  .content { padding: 16px 12px calc(28px + env(safe-area-inset-bottom)); }
+  .page-head { margin-bottom: 14px; gap: 10px; }
+  .page-title { font-size: 20px; }
+  .page-head .btn { padding: 9px 11px; font-size: 12px; }
+  .card { padding: 16px 14px; border-radius: 10px; margin-bottom: 14px; }
+  .card h2 { font-size: 16px; margin-bottom: 12px; }
+  .hint { font-size: 12px; }
+
+  .item {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto;
+    gap: 9px 10px; padding: 13px 0;
+  }
+  .item .tag { grid-column: 1 / -1; justify-self: start; }
+  .item .info { grid-column: 1; }
+  .item .info b { font-size: 14px; line-height: 1.4; }
+  .item .info > span { line-height: 1.5; }
+  .item-actions { grid-column: 2; align-self: center; flex-direction: column; gap: 5px; }
+  .item-actions button { min-width: 48px; min-height: 34px; padding: 6px 9px; }
+
+  .roster-add { gap: 7px; }
+  .roster-add input { min-height: 42px; font-size: 16px; }
+  .roster-add .btn { min-height: 42px; }
+  #eventOwners { padding: 8px; }
+  #eventOwners input { min-width: 110px; font-size: 16px; }
+
+  .modal { padding: 10px; }
+  .modal-box { max-height: calc(100svh - 20px); overflow-y: auto; border-radius: 12px; padding: 20px 15px 16px; }
+  .modal-head { margin-bottom: 14px; }
+  .modal-head h2 { font-size: 18px; }
+  .modal-close { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; }
+  .event-form { gap: 12px; }
+  .event-form input, .event-form select, .event-form textarea { min-height: 44px; font-size: 16px; }
+  .event-form textarea { min-height: 112px; line-height: 1.55; }
+  .form-actions { flex-direction: column-reverse; align-items: stretch; }
+  .form-actions .btn { width: 100%; min-height: 44px; }
+}
