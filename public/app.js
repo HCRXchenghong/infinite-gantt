@@ -18,7 +18,20 @@ const LEVELS = [
   { mode: 'quarter', name: '季度', pxPerDay: 1.1 },
 ];
 
-let levelIdx = 1; // 默认「周」
+const LEVEL_STORAGE_KEY = 'infinite-gantt-level';
+function getSavedLevel() {
+  try {
+    const saved = Number(localStorage.getItem(LEVEL_STORAGE_KEY));
+    return Number.isInteger(saved) && saved >= 0 && saved < LEVELS.length ? saved : 0;
+  } catch (e) {
+    return 0;
+  }
+}
+function saveLevel() {
+  try { localStorage.setItem(LEVEL_STORAGE_KEY, String(levelIdx)); } catch (e) { /* 忽略浏览器存储限制 */ }
+}
+
+let levelIdx = getSavedLevel(); // 首次默认「日」，之后沿用用户上次选择
 let lastEvents = [];
 
 // 渲染期的坐标系（供滚动定位换算用）
@@ -292,12 +305,14 @@ document.addEventListener('keydown', (e) => {
 document.querySelector('#zoomIn').addEventListener('click', () => {
   if (levelIdx > 0) {
     levelIdx--;
+    saveLevel();
     render({ anchor: 'keep' });
   }
 });
 document.querySelector('#zoomOut').addEventListener('click', () => {
   if (levelIdx < LEVELS.length - 1) {
     levelIdx++;
+    saveLevel();
     render({ anchor: 'keep' });
   }
 });
