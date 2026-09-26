@@ -45,9 +45,6 @@ if (!ADMIN_USER || !ADMIN_PASS) {
 // 四个研发部分（四条线），顺序固定
 const PARTS = ['硬件研发', '软件开发', '平台运营', '其他部分'];
 
-// 同一部分内最多允许并行进行的事件数（必须 < 3，即最多 2 个并行）
-const MAX_CONCURRENT_PER_PART = 2;
-
 // 登录会话：token -> 过期时间戳。12 小时过期。
 const SESSION_TTL = 12 * 60 * 60 * 1000;
 const SESSIONS = new Map();
@@ -131,35 +128,6 @@ function addToRoster(data, names) {
   const set = new Set(data.roster);
   (names || []).forEach((n) => { if (n && String(n).trim()) set.add(String(n).trim()); });
   data.roster = [...set];
-}
-
-// 计算一组 [startMs, endMs] 区间的最大并行数（含起止当天）
-function calcMaxConcurrent(intervals) {
-  const points = [];
-  for (const [s, e] of intervals) {
-    points.push([s, 1]);
-    points.push([e + DAY, -1]); // 到结束当天 24:00 都算"进行中"
-  }
-  points.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
-  let cur = 0, max = 0;
-  for (const [, d] of points) {
-    cur += d;
-    if (cur > max) max = cur;
-  }
-  return max;
-}
-
-// 同一部分内并发校验：候选事件加入后，该部分同一时间并行事件数不得超过 MAX_CONCURRENT_PER_PART
-function checkConcurrency(events, part, start, end, excludeId) {
-  const intervals = events
-    .filter((e) => e.part === part && e.id !== excludeId)
-    .map((e) => [new Date(e.start).getTime(), new Date(e.end).getTime()]);
-  intervals.push([new Date(start).getTime(), new Date(end).getTime()]);
-  const max = calcMaxConcurrent(intervals);
-  if (max > MAX_CONCURRENT_PER_PART) {
-    return { ok: false, max };
-  }
-  return { ok: true, max };
 }
 
 function loadBans() {
@@ -344,14 +312,6 @@ const server = http.createServer(async (req, res) => {
       const data = readData();
       const owners = parseOwners(body);
 
-      const conc = checkConcurrency(data.events, body.part, body.start, body.end, null);
-      if (!conc.ok) {
-        return sendJSON(res, 409, {
-          ok: false,
-          error: `「${body.part}」同一时间进行的事件不能超过 ${MAX_CONCURRENT_PER_PART} 个（当前会导致 ${conc.max} 个并行），请调整时间`,
-        });
-      }
-
       const event = {
         id: data.events.length ? Math.max(...data.events.map((e) => e.id)) + 1 : 1,
         title: String(body.title).trim(),
@@ -381,14 +341,6 @@ const server = http.createServer(async (req, res) => {
       const idx = data.events.findIndex((e) => e.id === id);
       if (idx === -1) return sendJSON(res, 404, { ok: false, error: '事件不存在' });
       const owners = parseOwners(body);
-
-      const conc = checkConcurrency(data.events, body.part, body.start, body.end, id);
-      if (!conc.ok) {
-        return sendJSON(res, 409, {
-          ok: false,
-          error: `「${body.part}」同一时间进行的事件不能超过 ${MAX_CONCURRENT_PER_PART} 个（当前会导致 ${conc.max} 个并行），请调整时间`,
-        });
-      }
 
       const event = {
         id,
